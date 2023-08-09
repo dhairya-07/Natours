@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');

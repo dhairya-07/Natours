@@ -2,10 +2,14 @@
   "extends": ["airbnb", "prettier", "plugin:node/recommended"],
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": [
+      "error",
+      {"endOfLine":"crlf"}
+    ],
     "spaced-comment": "off",
-    "no-console": "warn",
+    "no-console": "off",
     "consistent-return": "off",
+    "linebreak-style":"off",
     "func-names": "off",
     "object-shorthand": "off",
     "no-process-exit": "off",
