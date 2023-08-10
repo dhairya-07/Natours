@@ -1,4 +1,4 @@
-const Tours = require('../models/tourSchema');
+const Tours = require('../models/tourModel');
 const APIFeatures = require('../utils/APIFeatures');
 
 async function aliasTopTours(req, res, next) {
@@ -64,6 +64,74 @@ async function deleteTour(req, res) {
   }
 }
 
+async function getTourStats(req, res) {
+  try {
+    const stats = await Tours.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } },
+      },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' },
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRatings: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        $sort: { avgRatings: -1 },
+      },
+      // {
+      //   $match: { _id: { $ne: 'EASY' } },
+      // },
+    ]);
+    return res.status(200).json({ status: 'Success', stats });
+  } catch (err) {
+    return res.status(400).json({ status: 'Fail', msg: err });
+  }
+}
+
+async function getMonthlyPlan(req, res) {
+  try {
+    const year = req.params.year * 1;
+    const plan = await Tours.aggregate([
+      {
+        $unwind: '$startDates',
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numTours: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
+      },
+      {
+        $addFields: { month: '$_id' },
+      },
+      {
+        $project: { _id: 0 },
+      },
+      {
+        $sort: { numTours: -1 },
+      },
+    ]);
+    return res.status(200).json({ status: 'Success', plan });
+  } catch (err) {
+    return res.status(400).json({ status: 'Fail', msg: err });
+  }
+}
+
 module.exports = {
   aliasTopTours,
   getAllTours,
@@ -71,4 +139,6 @@ module.exports = {
   getTour,
   updateTour,
   deleteTour,
+  getTourStats,
+  getMonthlyPlan,
 };
