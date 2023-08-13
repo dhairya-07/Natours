@@ -13,9 +13,17 @@ mongoose
   .connect(DB_URL)
   .then(() => console.log('Database connected'))
   .catch((err) => {
-    console.log(err);
+    throw err;
   });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server started on port:`, PORT);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.log('UNHANDLED REJECTION!💥 SHUTTING DOWN...');
+  console.log(reason.name, reason.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
