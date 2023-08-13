@@ -7,6 +7,8 @@ const tourSchema = new Schema(
       required: [true, 'A tour must have a name'],
       unique: true,
       trim: true,
+      minLength: [8, 'Name must have atleast 8 characters'],
+      maxLength: [20, 'Name cannot have more than 20 characters'],
     },
     rating: {
       type: Number,
