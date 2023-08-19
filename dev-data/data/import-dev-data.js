@@ -8,7 +8,6 @@ const DB_URL = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD,
 );
 
-console.log(process.argv);
 const data = JSON.parse(
   fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'),
 );
