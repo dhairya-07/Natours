@@ -10,13 +10,11 @@ class APIFeatures {
     excludeFields.forEach((el) => delete queryObj[el]);
 
     let queryString = JSON.stringify(queryObj);
-    console.log(queryString);
     queryString = queryString.replace(
       /\b(gt|gte|lt|lte)\b/g,
       (match) => `$${match}`,
     );
     this.query = this.query.find(JSON.parse(queryString));
-    // console.log(this.query);
     return this;
   }
 
